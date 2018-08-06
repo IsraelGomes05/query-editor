@@ -1,9 +1,11 @@
 package br.org.queryeditor.forms;
 
+import br.org.queryeditor.controler.Controler;
 import br.org.queryeditor.controler.Template;
 import java.awt.BorderLayout;
 import java.sql.Connection;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -23,6 +25,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
     private int tabs = 1;
     private static Connection con;
+    private final Controler controler;
 
     /**
      * Cria e exibe a tela principal.
@@ -37,6 +40,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         initComponents();
         this.setTitle(parent.getTitle() + " SQL Editor");
         con = conexao;
+        this.controler = new Controler(this);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -272,7 +276,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAdicionarTabActionPerformed
 
     private void btnExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarActionPerformed
-
+        this.controler.executarQuery(QueryTelaPrincipal.con);
     }//GEN-LAST:event_btnExecutarActionPerformed
 
     public void adicionarTab() {
@@ -292,6 +296,25 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         textArea.setMarkOccurrences(true);
         
         jtbpQueryEditors.add("Query" + this.tabs++, cp);
+    }
+
+    
+    public RSyntaxTextArea getEditorSelecionado() {
+        if (jtbpQueryEditors.getSelectedIndex() != -1) {
+            JPanel painel = (JPanel) jtbpQueryEditors.getSelectedComponent();
+            RTextScrollPane tsp = (RTextScrollPane) painel.getComponent(jtbpQueryEditors.getSelectedIndex());
+            return (RSyntaxTextArea) tsp.getComponent(0);
+        }
+        return null;
+    }
+
+    public JTable getTabelaResultados() {
+       return this.jtbResultados;
+    }
+    
+    
+    public void exibirMensagen(String msg) {
+        
     }
 
     /**
