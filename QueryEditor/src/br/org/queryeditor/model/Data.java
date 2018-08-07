@@ -21,6 +21,7 @@ public class Data {
     private ArrayList dados;
 
     public Data() {
+        this.dados = new ArrayList();
     }
 
     public Data(Integer index, String nomeColuna, String tipoColuna) {

@@ -3,10 +3,13 @@ package br.org.queryeditor.forms;
 import br.org.queryeditor.controler.Controler;
 import br.org.queryeditor.controler.Template;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.sql.Connection;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -26,7 +29,10 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private int tabs = 1;
     private static Connection con;
     private final Controler controler;
-
+    private RSyntaxTextArea txtEditor;
+    private DefaultTableModel msgTabelaModel;
+    
+    
     /**
      * Cria e exibe a tela principal.
      *
@@ -41,6 +47,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         this.setTitle(parent.getTitle() + " SQL Editor");
         con = conexao;
         this.controler = new Controler(this);
+        this.msgTabelaModel = (DefaultTableModel) this.jtbMensagens.getModel();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -61,7 +68,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jpnResult = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jtbpResultados = new javax.swing.JTabbedPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         jtbResultados = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -175,6 +182,10 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setToolTipText("");
 
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        jtbResultados.setAutoCreateRowSorter(true);
+        jtbResultados.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jtbResultados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -183,20 +194,22 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
             }
         ));
+        jtbResultados.setShowHorizontalLines(false);
+        jtbResultados.setShowVerticalLines(false);
         jScrollPane3.setViewportView(jtbResultados);
 
-        jTabbedPane1.addTab("Resultados", jScrollPane3);
+        jtbpResultados.addTab("Resultados", jScrollPane3);
 
         jtbMensagens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "SAÍDA"
+                "INFO", "SAÍDA"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -204,18 +217,23 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         });
         jScrollPane4.setViewportView(jtbMensagens);
+        if (jtbMensagens.getColumnModel().getColumnCount() > 0) {
+            jtbMensagens.getColumnModel().getColumn(0).setMinWidth(100);
+            jtbMensagens.getColumnModel().getColumn(0).setPreferredWidth(50);
+            jtbMensagens.getColumnModel().getColumn(0).setMaxWidth(400);
+        }
 
-        jTabbedPane1.addTab("Mensagens", jScrollPane4);
+        jtbpResultados.addTab("Mensagens", jScrollPane4);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
+            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
         );
 
         jScrollPane2.setViewportView(jPanel1);
@@ -287,34 +305,44 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         RTextScrollPane sp = new RTextScrollPane(textArea);
         RSyntaxTextArea.setTemplatesEnabled(true);
         Template.adicionarTemplate(textArea);
-        
+
         cp.add(sp);
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         textArea.setCodeFoldingEnabled(true);
         textArea.setAutoIndentEnabled(true);
         textArea.setPaintTabLines(true);
         textArea.setMarkOccurrences(true);
-        
+
         jtbpQueryEditors.add("Query" + this.tabs++, cp);
     }
 
-    
     public RSyntaxTextArea getEditorSelecionado() {
-        if (jtbpQueryEditors.getSelectedIndex() != -1) {
+        if (jtbpQueryEditors.getSelectedIndex()!= -1) {
             JPanel painel = (JPanel) jtbpQueryEditors.getSelectedComponent();
-            RTextScrollPane tsp = (RTextScrollPane) painel.getComponent(jtbpQueryEditors.getSelectedIndex());
-            return (RSyntaxTextArea) tsp.getComponent(0);
+            this.getEditor((Container) painel);
+            return txtEditor;
         }
         return null;
     }
 
-    public JTable getTabelaResultados() {
-       return this.jtbResultados;
+    public void getEditor(Container container) {
+        for (Component c : container.getComponents()) {
+            if (c instanceof RSyntaxTextArea) {
+                txtEditor = (RSyntaxTextArea) c;
+                break;
+            } else if (c instanceof Container) {
+                getEditor((Container) c);
+            }
+        }
     }
-    
-    
-    public void exibirMensagen(String msg) {
-        
+
+    public JTable getTabelaResultados() {
+        return this.jtbResultados;
+    }
+
+    public void exibirMensagen(String info, String msg) {
+        this.msgTabelaModel.addRow(new Object[]{info, msg});
+        this.jtbpResultados.setSelectedIndex(1);
     }
 
     /**
@@ -331,16 +359,24 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(QueryTelaPrincipal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -361,7 +397,6 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSplitPane jSplitPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel jpnMenu;
     private javax.swing.JPanel jpnNavegacao;
     private javax.swing.JPanel jpnQueryEditor;
@@ -371,6 +406,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private javax.swing.JTable jtbMensagens;
     private javax.swing.JTable jtbResultados;
     private javax.swing.JTabbedPane jtbpQueryEditors;
+    private javax.swing.JTabbedPane jtbpResultados;
     // End of variables declaration//GEN-END:variables
 
 }
