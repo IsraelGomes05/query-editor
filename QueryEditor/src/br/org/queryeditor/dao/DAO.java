@@ -1,6 +1,6 @@
 package br.org.queryeditor.dao;
 
-import br.org.queryeditor.model.Data;
+import br.org.queryeditor.model.Info;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,27 +20,27 @@ import java.util.ArrayList;
  */
 public class DAO {
 
-    public ArrayList<Data> executeQuery(String sql, Connection con) throws SQLException {
-        ArrayList<Data> dados = new ArrayList();
+    public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
+        ArrayList<Info> dados = new ArrayList();
         PreparedStatement stm = con.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
         if (rs.next()) {
             this.preencherDados(rs, dados);
             return dados;
         }
-        return null;
+        return dados;
     }
 
     public void executeUpdate(String sql, Connection con) {
 
     }
 
-    public ArrayList<Data> preencherDados(ResultSet rs, ArrayList<Data> colecao) throws SQLException {
+    public ArrayList<Info> preencherDados(ResultSet rs, ArrayList<Info> colecao) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
 
         for (int cont = 1; cont <= columnCount; cont++) {
-            Data data = new Data();
+            Info data = new Info();
             data.setIndex(cont);
             data.setNomeColuna(metaData.getColumnName(cont));
             data.setTipoDadoColuna(metaData.getColumnTypeName(cont));
@@ -48,7 +48,7 @@ public class DAO {
         }
 
         do {
-            for (Data coluna : colecao) {
+            for (Info coluna : colecao) {
                 coluna.setDados(rs.getObject(coluna.getIndex()));
             }
         } while (rs.next());

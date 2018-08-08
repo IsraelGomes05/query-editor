@@ -13,18 +13,18 @@ import java.util.ArrayList;
  * @version     1.0
  * @since       1.0
  */
-public class Data {
+public class Info {
     
     private Integer index;
     private String  nomeColuna;
     private String  tipoDadoColuna;
     private ArrayList dados;
 
-    public Data() {
+    public Info() {
         this.dados = new ArrayList();
     }
 
-    public Data(Integer index, String nomeColuna, String tipoColuna) {
+    public Info(Integer index, String nomeColuna, String tipoColuna) {
         this.index = index;
         this.nomeColuna = nomeColuna;
         this.tipoDadoColuna = tipoColuna;

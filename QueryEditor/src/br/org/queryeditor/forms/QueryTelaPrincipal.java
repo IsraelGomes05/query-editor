@@ -2,12 +2,21 @@ package br.org.queryeditor.forms;
 
 import br.org.queryeditor.controler.Controler;
 import br.org.queryeditor.controler.Template;
+import br.org.queryeditor.controler.util.Enumerated;
+import br.org.queryeditor.forms.formsutil.RenderizadorTabela;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -18,7 +27,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * Tela principal da aplicação<br>
  *
  * created 05/08/2018<br>
- * lastModified 05/08/2018
+ * lastModified 07/08/2018
  *
  * @author Israel Gomes
  * @version 1.0
@@ -31,7 +40,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private final Controler controler;
     private RSyntaxTextArea txtEditor;
     private DefaultTableModel msgTabelaModel;
-    
+    private ActionMap actionMap;
     
     /**
      * Cria e exibe a tela principal.
@@ -48,6 +57,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         con = conexao;
         this.controler = new Controler(this);
         this.msgTabelaModel = (DefaultTableModel) this.jtbMensagens.getModel();
+        jtbMensagens.setDefaultRenderer(Object.class, new RenderizadorTabela());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -179,10 +189,10 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
         jSplitPane2.setTopComponent(jpnQueryEditor);
 
-        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setToolTipText("");
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jtbResultados.setAutoCreateRowSorter(true);
         jtbResultados.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
@@ -195,17 +205,20 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         ));
         jtbResultados.setShowHorizontalLines(false);
-        jtbResultados.setShowVerticalLines(false);
         jScrollPane3.setViewportView(jtbResultados);
 
         jtbpResultados.addTab("Resultados", jScrollPane3);
+
+        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane4.setToolTipText("");
+        jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         jtbMensagens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "INFO", "SAÍDA"
+                "", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -216,6 +229,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        jtbMensagens.setRowSelectionAllowed(false);
+        jtbMensagens.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jtbMensagens.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jtbMensagens.setShowHorizontalLines(false);
+        jtbMensagens.setShowVerticalLines(false);
         jScrollPane4.setViewportView(jtbMensagens);
         if (jtbMensagens.getColumnModel().getColumnCount() > 0) {
             jtbMensagens.getColumnModel().getColumn(0).setMinWidth(100);
@@ -305,14 +323,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         RTextScrollPane sp = new RTextScrollPane(textArea);
         RSyntaxTextArea.setTemplatesEnabled(true);
         Template.adicionarTemplate(textArea);
-
+        textArea.setActionMap(actionMap);
         cp.add(sp);
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         textArea.setCodeFoldingEnabled(true);
         textArea.setAutoIndentEnabled(true);
         textArea.setPaintTabLines(true);
         textArea.setMarkOccurrences(true);
-
         jtbpQueryEditors.add("Query" + this.tabs++, cp);
     }
 
@@ -327,6 +344,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
     public void getEditor(Container container) {
         for (Component c : container.getComponents()) {
+            loadKeyStrokes((JComponent)c);
             if (c instanceof RSyntaxTextArea) {
                 txtEditor = (RSyntaxTextArea) c;
                 break;
@@ -340,11 +358,31 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         return this.jtbResultados;
     }
 
-    public void exibirMensagen(String info, String msg) {
-        this.msgTabelaModel.addRow(new Object[]{info, msg});
-        this.jtbpResultados.setSelectedIndex(1);
+    public void exibirMensagen(Enumerated.TipoMsg tipoMsg, String msg, boolean requisitarFoco) {
+        if (requisitarFoco) {
+            this.jtbpResultados.setSelectedIndex(1);
+        } else {
+            this.jtbpResultados.setSelectedIndex(0);
+        }
+        
+        this.msgTabelaModel.addRow(new Object[]{tipoMsg.getDescricao(), msg});
+        if (msgTabelaModel.getRowCount() > 10) {
+            msgTabelaModel.removeRow(0);
+        }
     }
 
+    private void loadKeyStrokes(JComponent conponent) {
+         String key = "actionKey";
+        conponent.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK), key);
+        actionMap = conponent.getRootPane().getActionMap();
+        actionMap.put(key, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+    }
+    
     /**
      * @param args the command line arguments
      */
