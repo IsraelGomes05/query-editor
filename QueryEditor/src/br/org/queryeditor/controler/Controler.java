@@ -12,20 +12,20 @@ import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
- * Função<br>.
+ * Classe responsável pelas regras de negócio.<br>
  *
- * created 05/08/2018<br>
+ * created      05/08/2018<br>
  * lastModified 05/08/2018
  *
- * @author Israel Gomes
+ * @author  Israel Gomes
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 public class Controler {
 
     private final QueryTelaPrincipal view;
     private final DAO dao;
-    private DefaultTableModel jtbResultadosModel;
+    private final DefaultTableModel jtbResultadosModel;
     private final JTable tabelaResultados;
 
     public Controler(QueryTelaPrincipal view) {
@@ -35,11 +35,16 @@ public class Controler {
         this.tabelaResultados = view.getTabelaResultados();
     }
 
+    /**
+     * Executa uma consulta no banco de dodos.
+     * 
+     * @param con Conexãao com o banco de dados.
+     */
     public void executarQuery(Connection con) {
         try {
             RSyntaxTextArea editor = view.getEditorSelecionado();
             if (editor != null) {
-                String query = editor.getText();
+                String query = editor.getText().trim();
                 ArrayList<Info> dados;
 
                 if (query.isEmpty()) {
@@ -59,6 +64,11 @@ public class Controler {
         }
     }
 
+    /**
+     * Preenche a tabela de resultados.
+     * 
+     * @param dados lista preenchida.
+     */
     public void preencherTabela(ArrayList<Info> dados) {
         long qtdLinhas;
         try {
@@ -84,6 +94,9 @@ public class Controler {
         }
     }
 
+    /**
+     * Limpa a tebela de resultados.
+     */
     public void limparTabela() {
         if (this.tabelaResultados.getColumnCount() > 0) {
             this.jtbResultadosModel.setNumRows(0);

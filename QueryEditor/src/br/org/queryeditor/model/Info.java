@@ -4,7 +4,7 @@ package br.org.queryeditor.model;
 import java.util.ArrayList;
 
 /**
- * Função<br>.
+ * Define o Bean, que representa o resultado de uma consulta no banco de dados.<br>
  * 
  * created      05/08/2018<br>
  * lastModified 05/08/2018

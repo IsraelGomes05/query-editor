@@ -9,21 +9,31 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Função<br>.
+ * Classe responsável pela execução de ações no banco de dados.<br>
  *
- * created 05/08/2018<br>
- * lastModified 05/08/2018
+ * created      05/08/2018<br>
+ * lastModified 08/08/2018
  *
- * @author Israel Gomes
+ * @author  Israel Gomes
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 public class DAO {
 
+    /**
+     * Executa uma <b>Consulta no banco de dados.</b>
+     * 
+     * @param sql Query a ser executada.
+     * @param con Conexão com o banco de dados.
+     * @return Lista preenchida com os resultados da consulta, ou uma lista vazia, caso não seja encontrado nada.
+     * @throws SQLException 
+     */
     public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
         ArrayList<Info> dados = new ArrayList();
         PreparedStatement stm = con.prepareStatement(sql);
+        
         ResultSet rs = stm.executeQuery();
+        
         if (rs.next()) {
             this.preencherDados(rs, dados);
             return dados;
@@ -35,6 +45,14 @@ public class DAO {
 
     }
 
+    /**
+     * Preenche uma lista com o ResultSet.
+     * 
+     * @param rs ResultSet preenchido.
+     * @param colecao Lista a ser preenchida com os resultados.
+     * @return Lista preenchida com o ResultSet.
+     * @throws SQLException 
+     */
     public ArrayList<Info> preencherDados(ResultSet rs, ArrayList<Info> colecao) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();

@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * Permite que as linhas de uma tabela, mudem de cor de acordo com a condição
+ * Permite que as linhas ou o texto de uma tabela, mudem de cor de acordo com a condição
  * estipulada.<br>
  *
  * created 07/07/2018<br>
@@ -15,7 +15,7 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author Israel Gomes
  * @version 1.0
- * @since 3.0.0
+ * @since   1.0
  */
 public class RenderizadorTabela implements TableCellRenderer {
 

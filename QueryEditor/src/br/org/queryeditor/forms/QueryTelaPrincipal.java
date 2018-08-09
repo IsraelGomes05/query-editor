@@ -3,6 +3,7 @@ package br.org.queryeditor.forms;
 import br.org.queryeditor.controler.Controler;
 import br.org.queryeditor.controler.Template;
 import br.org.queryeditor.controler.util.Enumerated;
+import br.org.queryeditor.forms.formsutil.ButtonTabComponent;
 import br.org.queryeditor.forms.formsutil.RenderizadorTabela;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -12,7 +13,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -26,22 +26,20 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 /**
  * Tela principal da aplicação<br>
  *
- * created 05/08/2018<br>
- * lastModified 07/08/2018
+ * created      05/08/2018<br>
+ * lastModified 08/08/2018
  *
- * @author Israel Gomes
+ * @author  Israel Gomes
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 public class QueryTelaPrincipal extends javax.swing.JDialog {
 
-    private int tabs = 1;
+    private int tab = 0;
     private static Connection con;
-    private final Controler controler;
+    private Controler controler;
     private RSyntaxTextArea txtEditor;
     private DefaultTableModel msgTabelaModel;
-    private ActionMap actionMap;
-    
     /**
      * Cria e exibe a tela principal.
      *
@@ -58,6 +56,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         this.controler = new Controler(this);
         this.msgTabelaModel = (DefaultTableModel) this.jtbMensagens.getModel();
         jtbMensagens.setDefaultRenderer(Object.class, new RenderizadorTabela());
+    }
+
+    public QueryTelaPrincipal() {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -88,7 +89,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setResizable(false);
+        setMinimumSize(new java.awt.Dimension(900, 600));
 
         jpnMenu.setBackground(new java.awt.Color(44, 62, 80));
         jpnMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
@@ -316,25 +317,35 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     }//GEN-LAST:event_btnExecutarActionPerformed
 
     public void adicionarTab() {
+        
         JPanel cp = new JPanel(new BorderLayout());
-
         RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SQL);
         RTextScrollPane sp = new RTextScrollPane(textArea);
         RSyntaxTextArea.setTemplatesEnabled(true);
         Template.adicionarTemplate(textArea);
-        textArea.setActionMap(actionMap);
         cp.add(sp);
+
+        loadKeyStrokes(textArea);
+        
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         textArea.setCodeFoldingEnabled(true);
         textArea.setAutoIndentEnabled(true);
         textArea.setPaintTabLines(true);
         textArea.setMarkOccurrences(true);
-        jtbpQueryEditors.add("Query" + this.tabs++, cp);
+        
+        jtbpQueryEditors.add("Query" + tab, cp);
+        jtbpQueryEditors.setTabComponentAt(jtbpQueryEditors.getTabCount() -1, new ButtonTabComponent(jtbpQueryEditors));
+        tab++;
     }
 
+    /**
+     * Retorna o editor atual, onde está sendo editado.
+     * 
+     * @return Editor atual.
+     */
     public RSyntaxTextArea getEditorSelecionado() {
-        if (jtbpQueryEditors.getSelectedIndex()!= -1) {
+        if (jtbpQueryEditors.getSelectedIndex() != -1) {
             JPanel painel = (JPanel) jtbpQueryEditors.getSelectedComponent();
             this.getEditor((Container) painel);
             return txtEditor;
@@ -342,9 +353,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         return null;
     }
 
+    /**
+     * Inicializa a variável global <b>txtEditor</b> Com o editor de querys.
+     * 
+     * @param container Componente inicial onde está o Editor.
+     */
     public void getEditor(Container container) {
         for (Component c : container.getComponents()) {
-            loadKeyStrokes((JComponent)c);
             if (c instanceof RSyntaxTextArea) {
                 txtEditor = (RSyntaxTextArea) c;
                 break;
@@ -354,35 +369,58 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Retorna a tabela de resultados, resposável por exibir os dados da query.
+     * 
+     * @return tabela de resultados.
+     */
     public JTable getTabelaResultados() {
         return this.jtbResultados;
     }
 
+    /**
+     * Exibe uma mensagem na tabela de saídas.
+     * 
+     * @param tipoMsg Tipo da mensagem a ser exibida.
+     * @param msg Mensagem a ser exibida.
+     * @param requisitarFoco Se a tabela com as mensagens deve ser exibida ou não.
+     */
     public void exibirMensagen(Enumerated.TipoMsg tipoMsg, String msg, boolean requisitarFoco) {
         if (requisitarFoco) {
             this.jtbpResultados.setSelectedIndex(1);
         } else {
             this.jtbpResultados.setSelectedIndex(0);
         }
-        
+
         this.msgTabelaModel.addRow(new Object[]{tipoMsg.getDescricao(), msg});
         if (msgTabelaModel.getRowCount() > 10) {
             msgTabelaModel.removeRow(0);
         }
     }
 
-    private void loadKeyStrokes(JComponent conponent) {
-         String key = "actionKey";
-        conponent.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK), key);
-        actionMap = conponent.getRootPane().getActionMap();
-        actionMap.put(key, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+    /**
+     * Carrega as teclas de atalho para o component.
+     * 
+     * @param component Componente que mapeará as teclas
+     */
+    private void loadKeyStrokes(JComponent component) {
+        component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), "executarQuery");
+        component.getActionMap().put("executarQuery", executarQuery);
+        
+        component.getInputMap().put(KeyStroke.getKeyStroke("F9"), "executarQuery");
+        component.getActionMap().put("executarQuery", executarQuery);
     }
-    
+
+    /**
+     * Ação que será executada
+     */
+    AbstractAction executarQuery = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            controler.executarQuery(con);
+        }
+    };
+
     /**
      * @param args the command line arguments
      */

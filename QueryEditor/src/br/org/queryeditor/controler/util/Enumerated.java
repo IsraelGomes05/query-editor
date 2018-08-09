@@ -2,10 +2,10 @@
 package br.org.queryeditor.controler.util;
 
 /**
- * Função<br>.
+ * Definir os Enums utilitários.<br>
  * 
  * created      07/08/2018<br>
- * lastModified 07/08/2018
+ * lastModified 08/08/2018
  * 
  * @author      Israel Gomes
  * @version     1.0
@@ -30,16 +30,8 @@ public class Enumerated {
             return id;
         }
 
-        public void setId(int id) {
-            this.id = id;
-        }
-
         public String getDescricao() {
             return descricao;
-        }
-
-        public void setDescricao(String descricao) {
-            this.descricao = descricao;
         }
 
         @Override
