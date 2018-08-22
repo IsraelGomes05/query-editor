@@ -20,7 +20,7 @@ public class Template {
     
     
     public static void adicionarTemplate(RSyntaxTextArea editor) {
-        CodeTemplateManager ctm = editor.getCodeTemplateManager();
+        CodeTemplateManager ctm = RSyntaxTextArea.getCodeTemplateManager();
         CodeTemplate ct = new StaticCodeTemplate("s", "SELECT", null);
         ctm.addTemplate(ct);
 

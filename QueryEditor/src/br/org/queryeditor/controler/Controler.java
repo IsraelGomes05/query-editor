@@ -14,12 +14,12 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 /**
  * Classe responsável pelas regras de negócio.<br>
  *
- * created      05/08/2018<br>
+ * created 05/08/2018<br>
  * lastModified 05/08/2018
  *
- * @author  Israel Gomes
+ * @author Israel Gomes
  * @version 1.0
- * @since   1.0
+ * @since 1.0
  */
 public class Controler {
 
@@ -37,7 +37,7 @@ public class Controler {
 
     /**
      * Executa uma consulta no banco de dodos.
-     * 
+     *
      * @param con Conexãao com o banco de dados.
      */
     public void executarQuery(Connection con) {
@@ -46,17 +46,20 @@ public class Controler {
             if (editor != null) {
                 String query = editor.getText().trim();
                 ArrayList<Info> dados;
-
                 if (query.isEmpty()) {
                     view.exibirMensagen(Enumerated.TipoMsg.ERRO, "A Query não pode estar vazia", true);
                     return;
                 }
-                
+
+//                if ( ! (query.split(" ")[0].equals("SELECT"))) {
+//                    this.dao.executeUpdate(query, con);
+//                    return;
+//                }
                 dados = this.dao.executeQuery(query, con);
-                if (! dados.isEmpty()) {
+                if (!dados.isEmpty()) {
                     this.preencherTabela(dados);
                 } else {
-                view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
+                    view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
                 }
             }
         } catch (SQLException ex) {
@@ -66,12 +69,16 @@ public class Controler {
 
     /**
      * Preenche a tabela de resultados.
-     * 
+     *
      * @param dados lista preenchida.
      */
     public void preencherTabela(ArrayList<Info> dados) {
         long qtdLinhas;
         try {
+            if (!dados.get(0).isSelect()) {
+                view.exibirMensagen(Enumerated.TipoMsg.INFO, "Query ok, {0} linhas afetadas ".replace("{0}", "" + dados.get(0).getLinhasAfetadas()), true);
+                return;
+            }
             int qtdColunas = dados.size();
 
             qtdLinhas = dados.get(0).getDados().size();

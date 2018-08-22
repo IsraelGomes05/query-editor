@@ -19,15 +19,19 @@ public class Info {
     private String  nomeColuna;
     private String  tipoDadoColuna;
     private ArrayList dados;
-
+    private Integer linhasAfetadas;
+    private boolean select;
+    
     public Info() {
         this.dados = new ArrayList();
     }
 
-    public Info(Integer index, String nomeColuna, String tipoColuna) {
+    public Info(Integer index, String nomeColuna, String tipoColuna, Integer linhasAfetadas,  boolean select) {
         this.index = index;
         this.nomeColuna = nomeColuna;
         this.tipoDadoColuna = tipoColuna;
+        this.linhasAfetadas = linhasAfetadas;
+        this.select = select;
         this.dados = new ArrayList();
     }
 
@@ -61,5 +65,21 @@ public class Info {
 
     public void setDados(Object dado) {
         this.dados.add(dado);
+    }
+
+    public Integer getLinhasAfetadas() {
+        return linhasAfetadas;
+    }
+
+    public void setLinhasAfetadas(Integer linhasAfetadas) {
+        this.linhasAfetadas = linhasAfetadas;
+    }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
     }
 }

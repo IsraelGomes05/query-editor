@@ -1,7 +1,7 @@
 package br.org.queryeditor.forms.formsutil;
 
 /**
- * Função<br>.
+ * Função<br>
  *
  * created 00/00/2018<br>
  * lastModified 00/00/2018
@@ -32,6 +32,7 @@ public class ButtonTabComponent extends JPanel {
         
         setOpaque(false);
         JLabel label = new JLabel() {
+            @Override
             public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
                 if (i != -1) {
