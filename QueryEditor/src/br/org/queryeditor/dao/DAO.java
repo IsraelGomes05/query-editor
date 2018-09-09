@@ -30,6 +30,14 @@ public class DAO {
      * @throws SQLException
      */
     public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
+        Thread worker = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                
+            }
+        });
+        
+        worker.start();
         int numLinhasAfetadas;
         
         ArrayList<Info> dados = new ArrayList();

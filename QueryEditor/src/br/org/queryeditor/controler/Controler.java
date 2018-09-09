@@ -1,6 +1,7 @@
 package br.org.queryeditor.controler;
 
 import br.org.queryeditor.controler.util.Enumerated;
+import br.org.queryeditor.controler.util.Exportacao;
 import br.org.queryeditor.dao.DAO;
 import br.org.queryeditor.forms.QueryTelaPrincipal;
 import br.org.queryeditor.model.Info;
@@ -50,11 +51,6 @@ public class Controler {
                     view.exibirMensagen(Enumerated.TipoMsg.ERRO, "A Query não pode estar vazia", true);
                     return;
                 }
-
-//                if ( ! (query.split(" ")[0].equals("SELECT"))) {
-//                    this.dao.executeUpdate(query, con);
-//                    return;
-//                }
                 dados = this.dao.executeQuery(query, con);
                 if (!dados.isEmpty()) {
                     this.preencherTabela(dados);
@@ -112,5 +108,9 @@ public class Controler {
             this.tabelaResultados.repaint();
             this.tabelaResultados.revalidate();
         }
+    }
+
+    public void exportarSaida() {
+        Exportacao.exportarParaExel(view, tabelaResultados);
     }
 }

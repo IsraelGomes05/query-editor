@@ -11,6 +11,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -64,6 +65,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jppmOpcoesTabelaResultados = new javax.swing.JPopupMenu();
+        jmExportarParaExel = new javax.swing.JMenuItem();
         jpnTelaPrincipal = new javax.swing.JPanel();
         jpnMenu = new javax.swing.JPanel();
         btnAdicionarTab = new javax.swing.JButton();
@@ -84,9 +87,15 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jtbResultados = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         jtbMensagens = new javax.swing.JTable();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+
+        jmExportarParaExel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-ms-excel-16.png"))); // NOI18N
+        jmExportarParaExel.setText("Exportar Para Excel");
+        jmExportarParaExel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmExportarParaExelActionPerformed(evt);
+            }
+        });
+        jppmOpcoesTabelaResultados.add(jmExportarParaExel);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(900, 600));
@@ -101,7 +110,10 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         });
 
-        btnExecutar.setText("Executar");
+        btnExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-próximo-20.png"))); // NOI18N
+        btnExecutar.setToolTipText("Executar");
+        btnExecutar.setBorderPainted(false);
+        btnExecutar.setContentAreaFilled(false);
         btnExecutar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExecutarActionPerformed(evt);
@@ -116,16 +128,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(btnAdicionarTab)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnExecutar)
+                .addComponent(btnExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpnMenuLayout.setVerticalGroup(
             jpnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpnMenuLayout.createSequentialGroup()
-                .addGroup(jpnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdicionarTab)
-                    .addComponent(btnExecutar))
-                .addGap(0, 6, Short.MAX_VALUE))
+            .addComponent(btnAdicionarTab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnExecutar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jSplitPane2.setDividerLocation(350);
@@ -206,6 +215,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         ));
         jtbResultados.setShowHorizontalLines(false);
+        jtbResultados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtbResultadosMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jtbResultados);
 
         jtbpResultados.addTab("Resultados", jScrollPane3);
@@ -252,7 +266,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
         );
 
         jScrollPane2.setViewportView(jPanel1);
@@ -265,7 +279,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         );
         jpnResultLayout.setVerticalGroup(
             jpnResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
         );
 
         jSplitPane2.setRightComponent(jpnResult);
@@ -284,14 +298,6 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 .addGap(0, 0, 0)
                 .addComponent(jSplitPane2))
         );
-
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -315,6 +321,16 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private void btnExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarActionPerformed
         this.controler.executarQuery(QueryTelaPrincipal.con);
     }//GEN-LAST:event_btnExecutarActionPerformed
+
+    private void jtbResultadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtbResultadosMouseClicked
+         if (evt.getButton() == MouseEvent.BUTTON3) {
+            jppmOpcoesTabelaResultados.show(jtbResultados, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jtbResultadosMouseClicked
+
+    private void jmExportarParaExelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmExportarParaExelActionPerformed
+       controler.exportarSaida();
+    }//GEN-LAST:event_jmExportarParaExelActionPerformed
 
     public void adicionarTab() {
         
@@ -462,9 +478,6 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarTab;
     private javax.swing.JButton btnExecutar;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -473,12 +486,14 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JMenuItem jmExportarParaExel;
     private javax.swing.JPanel jpnMenu;
     private javax.swing.JPanel jpnNavegacao;
     private javax.swing.JPanel jpnQueryEditor;
     private javax.swing.JPanel jpnResult;
     private javax.swing.JPanel jpnSuperior;
     private javax.swing.JPanel jpnTelaPrincipal;
+    private javax.swing.JPopupMenu jppmOpcoesTabelaResultados;
     private javax.swing.JTable jtbMensagens;
     private javax.swing.JTable jtbResultados;
     private javax.swing.JTabbedPane jtbpQueryEditors;
