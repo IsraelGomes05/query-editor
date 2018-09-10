@@ -30,21 +30,15 @@ public class DAO {
      * @throws SQLException
      */
     public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
-        Thread worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                
-            }
-        });
-        
-        worker.start();
         int numLinhasAfetadas;
         
         ArrayList<Info> dados = new ArrayList();
         PreparedStatement stm = con.prepareStatement(sql);
         boolean isSelect = stm.execute();
         numLinhasAfetadas = stm.getUpdateCount();
+        
         stm.getUpdateCount();
+        
         if (isSelect) {
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {

@@ -103,17 +103,26 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jpnMenu.setBackground(new java.awt.Color(44, 62, 80));
         jpnMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 51, 51)));
 
-        btnAdicionarTab.setText("Novo Editor");
+        btnAdicionarTab.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-nova-janela-filled-36.png"))); // NOI18N
+        btnAdicionarTab.setToolTipText("Novo Editor");
+        btnAdicionarTab.setBorderPainted(false);
+        btnAdicionarTab.setContentAreaFilled(false);
+        btnAdicionarTab.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdicionarTab.setRolloverEnabled(true);
+        btnAdicionarTab.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-nova-janela-filled-36 verde.png"))); // NOI18N
         btnAdicionarTab.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdicionarTabActionPerformed(evt);
             }
         });
 
-        btnExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-próximo-20.png"))); // NOI18N
+        btnExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-executar-comando-filled-36-amarelo.png"))); // NOI18N
         btnExecutar.setToolTipText("Executar");
         btnExecutar.setBorderPainted(false);
         btnExecutar.setContentAreaFilled(false);
+        btnExecutar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnExecutar.setRolloverEnabled(true);
+        btnExecutar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-executar-comando-filled-36.png"))); // NOI18N
         btnExecutar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExecutarActionPerformed(evt);
@@ -126,8 +135,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jpnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpnMenuLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnAdicionarTab)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAdicionarTab, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
                 .addComponent(btnExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -174,14 +183,17 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpnSuperiorLayout.createSequentialGroup()
                 .addComponent(jpnNavegacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.DEFAULT_SIZE, 1074, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addContainerGap())
         );
         jpnSuperiorLayout.setVerticalGroup(
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpnNavegacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jtbpQueryEditors)
+            .addGroup(jpnSuperiorLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jtbpQueryEditors)
+                .addContainerGap())
         );
 
         jScrollPane1.setViewportView(jpnSuperior);
@@ -266,7 +278,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
         );
 
         jScrollPane2.setViewportView(jPanel1);

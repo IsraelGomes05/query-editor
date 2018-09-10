@@ -50,24 +50,24 @@ public class Exportacao {
 
     private static void paraExcel(JTable table, File file) throws IOException {
         TableModel modelTemp = table.getModel();
-        FileWriter excel = new FileWriter(file);
-        excel.write("<html> <head><meta charset=\"utf-8\"></head><style>\n"
+        FileWriter saida = new FileWriter(file);
+        saida.write("<html> <head><meta charset=\"utf-8\"></head><style>\n"
                 + "th, td {"
                 + "    font-size: 12pt;"
                 + "}"
                 + "</style><table border=\"1\"><tr>");
         for (int i = 0; i < modelTemp.getColumnCount(); i++) {
-            excel.write("<th>" + modelTemp.getColumnName(i) + "</th>");
+            saida.write("<th>" + modelTemp.getColumnName(i) + "</th>");
         }
-        excel.write("</tr>");
+        saida.write("</tr>");
         for (int i = 0; i < modelTemp.getRowCount(); i++) {
-            excel.write("<tr>");
+            saida.write("<tr>");
             for (int j = 0; j < modelTemp.getColumnCount(); j++) {
-                excel.write("<td>" + modelTemp.getValueAt(i, j).toString() + "</td>");
+                saida.write("<td>" + modelTemp.getValueAt(i, j).toString() + "</td>");
             }
-            excel.write("</tr>");
+            saida.write("</tr>");
         }
-        excel.write("</table></html>");
-        excel.close();
+        saida.write("</table></html>");
+        saida.close();
     }
 }
