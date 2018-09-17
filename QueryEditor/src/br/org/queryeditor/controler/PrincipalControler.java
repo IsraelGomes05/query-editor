@@ -2,12 +2,18 @@ package br.org.queryeditor.controler;
 
 import br.org.queryeditor.controler.util.Enumerated;
 import br.org.queryeditor.controler.util.Exportacao;
+import br.org.queryeditor.controler.util.StringUtils;
 import br.org.queryeditor.dao.DAO;
 import br.org.queryeditor.forms.QueryTelaPrincipal;
 import br.org.queryeditor.model.Info;
+import br.org.queryeditor.model.Tabela;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -22,18 +28,20 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
  * @version 1.0
  * @since 1.0
  */
-public class Controler {
+public class PrincipalControler {
 
     private final QueryTelaPrincipal view;
     private final DAO dao;
     private final DefaultTableModel jtbResultadosModel;
     private final JTable tabelaResultados;
+    private final String localArquivo;
 
-    public Controler(QueryTelaPrincipal view) {
+    public PrincipalControler(QueryTelaPrincipal view) {
         this.view = view;
         this.dao = new DAO();
         this.jtbResultadosModel = (DefaultTableModel) view.getTabelaResultados().getModel();
         this.tabelaResultados = view.getTabelaResultados();
+        this.localArquivo = view.getLocalQuerys();
     }
 
     /**
@@ -75,22 +83,12 @@ public class Controler {
                 view.exibirMensagen(Enumerated.TipoMsg.INFO, "Query ok, {0} linhas afetadas ".replace("{0}", "" + dados.get(0).getLinhasAfetadas()), true);
                 return;
             }
-            int qtdColunas = dados.size();
-
             qtdLinhas = dados.get(0).getDados().size();
-            Object[] linhaTabela = new Object[qtdColunas];
-
             this.limparTabela();
             for (Info dado : dados) {
-                jtbResultadosModel.addColumn(dado.getNomeColuna().toUpperCase().concat(" (" + dado.getTipoDadoColuna().toLowerCase() + ")"));
+                jtbResultadosModel.addColumn(dado.getNomeColuna().toUpperCase().concat(" (" + dado.getTipoDadoColuna().toLowerCase() + ")"), dado.getDados().toArray());
             }
-
-            for (int linha = 0; linha < qtdLinhas; linha++) {
-                for (int coluna = 0; coluna < qtdColunas; coluna++) {
-                    linhaTabela[coluna] = dados.get(coluna).getDados().get(linha);
-                }
-                jtbResultadosModel.addRow(linhaTabela);
-            }
+            view.rendimensionarTabela();
             view.exibirMensagen(Enumerated.TipoMsg.INFO, "Query ok, " + qtdLinhas + (qtdLinhas > 1 ? " linhas encontradas" : " linha encontrada"), false);
         } catch (Exception ex) {
             view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
@@ -112,5 +110,45 @@ public class Controler {
 
     public void exportarSaida() {
         Exportacao.exportarParaExel(view, tabelaResultados);
+    }
+
+    public HashMap<String, String> getQuerysMap() {
+        String[] vetorQuerys;
+        HashMap<String, String> querysMap = new HashMap();
+        File file = new File(this.localArquivo);
+        try {
+            String arquivo = StringUtils.lerArquivo(file);
+            vetorQuerys = arquivo.split("]");
+            for (String var : vetorQuerys) {
+                String[] query;
+                query = var.split("\\|");
+                querysMap.put(query[0].replace("[", ""), query[1]);
+            }
+        } catch (IOException ex) {
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+        }
+        return querysMap;
+    }
+
+    public void carregarQuery(String query) {
+        RSyntaxTextArea editor = view.getEditorSelecionado();
+        if (editor != null) {
+            String queryAtual = editor.getText() == null ? "" : editor.getText();
+            queryAtual = queryAtual.concat("\n" + query);
+            editor.setText(queryAtual);
+            return;
+        }
+        view.exibirMensagen(Enumerated.TipoMsg.ERRO, "Nenhum editor selecionado!", true);
+
+    }
+
+    public List<Tabela> getMapeamentoBd(Connection con) {
+        ArrayList<Tabela> tabelasBd = new ArrayList();
+        try {
+            tabelasBd = dao.mapearBancoDeDados(con);
+        } catch (SQLException ex) {
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+        }
+        return tabelasBd;
     }
 }

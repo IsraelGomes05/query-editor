@@ -7,6 +7,7 @@ package br.org.queryeditor.forms.formsutil;
 import br.org.queryeditor.controler.util.Enumerated;
 import br.org.queryeditor.forms.QueryTelaPrincipal;
 import java.net.URL;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,12 +21,11 @@ import javax.swing.JLabel;
  */
 public class ViewUtil {
 
-    private QueryTelaPrincipal view;
+    private static final QueryTelaPrincipal view;
 
-    public ViewUtil() {
-        this.view = new QueryTelaPrincipal();
+    static {
+        view = new QueryTelaPrincipal();
     }
-    
     
     public void alterarIcone(JLabel label, String imagem) {
         String diretorio = "/br/org/queryeditor/imagens/" + imagem;
@@ -37,7 +37,7 @@ public class ViewUtil {
             label.setIcon(img);
 
         } catch (Exception ex) {
-            this.view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
         }
     }
 
@@ -51,7 +51,7 @@ public class ViewUtil {
             botao.setIcon(img);
 
         } catch (Exception ex) {
-            this.view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
         }
     }
     
@@ -63,7 +63,20 @@ public class ViewUtil {
 
             return img;
         } catch (Exception ex) {
-            this.view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+            return null;
+        }
+    }
+    
+    public Icon getIcon(String imagem) {
+        String diretorio = "/br/org/queryeditor/imagens/" + imagem;
+        try {
+            URL resource = getClass().getResource(diretorio);
+            ImageIcon img = new ImageIcon(resource);
+
+            return img;
+        } catch (Exception ex) {
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
             return null;
         }
     }

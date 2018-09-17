@@ -1,7 +1,10 @@
 package br.org.queryeditor.dao;
 
 import br.org.queryeditor.model.Info;
+import br.org.queryeditor.model.LinhaTabela;
+import br.org.queryeditor.model.Tabela;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -31,14 +34,14 @@ public class DAO {
      */
     public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
         int numLinhasAfetadas;
-        
+        this.mapearBancoDeDados(con);
         ArrayList<Info> dados = new ArrayList();
         PreparedStatement stm = con.prepareStatement(sql);
         boolean isSelect = stm.execute();
         numLinhasAfetadas = stm.getUpdateCount();
-        
+
         stm.getUpdateCount();
-        
+
         if (isSelect) {
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
@@ -46,12 +49,12 @@ public class DAO {
                 return dados;
             }
         } else {
-            Info dado = new  Info();
+            Info dado = new Info();
             dado.setLinhasAfetadas(numLinhasAfetadas);
             dado.setSelect(false);
             dados.add(dado);
         }
-                
+
         return dados;
     }
 
@@ -89,6 +92,27 @@ public class DAO {
         } while (rs.next());
 
         return colecao;
+    }
+
+    public ArrayList<Tabela> mapearBancoDeDados(Connection con) throws SQLException {
+        ArrayList<Tabela> tabelasList = new ArrayList();
+        ArrayList<LinhaTabela> linhaTabela;
+
+        DatabaseMetaData metaData = con.getMetaData();
+        ResultSet res = metaData.getTables(null, null, null, new String[]{"TABLE"});
+
+        while (res.next()) {
+            String nomeTabela = res.getString(3);
+            ResultSet columns = metaData.getColumns(null, null, nomeTabela, null);
+            linhaTabela = new ArrayList();
+            while (columns.next()) {
+                String coluna = columns.getString(4);
+                String tipoDeDados = columns.getString(6);
+                linhaTabela.add(new LinhaTabela(coluna, tipoDeDados));
+            }
+            tabelasList.add(new Tabela(nomeTabela, linhaTabela));
+        }
+        return tabelasList;
     }
 
 }
