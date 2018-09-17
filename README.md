@@ -21,7 +21,6 @@
    </body>
 </html>
 ```java
-
 // Passando como paramentro O Frame que será associado, Se é modal ou não, conexão com BD, Local do arquivo com as querys (Histórico)
         QueryTelaPrincipal query = new QueryTelaPrincipal(this, true, ConnectionFactory.getConexao(), "C:/Users/Israel Gomes/Documents/teste.txt");   
 ```
