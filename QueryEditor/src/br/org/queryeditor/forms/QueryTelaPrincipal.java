@@ -400,7 +400,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
-    public void setIconesJtree() {
+    public final void setIconesJtree() {
         JTreeRenderer renderer = new JTreeRenderer();
         renderer.setIcon(Tabela.class, viewUtil.getIcon("icons8-planilha-de-dados-16.png"));
         renderer.setIcon(LinhaTabela.class, viewUtil.getIcon("icons8-planilha-16.png"));
@@ -482,7 +482,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
      * @param requisitarFoco Se a tabela com as mensagens deve ser exibida ou
      * não.
      */
-    public void exibirMensagen(Enumerated.TipoMsg tipoMsg, String msg, boolean requisitarFoco) {
+    public final void exibirMensagen(Enumerated.TipoMsg tipoMsg, String msg, boolean requisitarFoco) {
         if (requisitarFoco) {
             this.jtbpResultados.setSelectedIndex(1);
         } else {
@@ -520,7 +520,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
     public void rendimensionarTabela() {
         for (int i = 0; i < jtbResultados.getColumnCount(); i++) {
-            String value = jtbResultados.getValueAt(0, i).toString();
+            String value = (jtbResultados.getValueAt(0, i) == null ? "" : jtbResultados.getValueAt(0, i).toString());
             Integer largura = value.length() * 15;
             largura = (largura > 300 ? 300 : (largura < 100 ? 100 : largura));
             jtbResultados.getTableHeader().getColumnModel().getColumn(i).setPreferredWidth(largura);

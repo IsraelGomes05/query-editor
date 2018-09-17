@@ -84,9 +84,24 @@ public class PrincipalControler {
                 return;
             }
             qtdLinhas = dados.get(0).getDados().size();
+            int qtdColunas = dados.size();
+            int cont = 0;
+            Object[] linhaTabela = new Object[qtdColunas];
+            String[] tiposDeDados = new String[qtdColunas];
+
             this.limparTabela();
             for (Info dado : dados) {
-                jtbResultadosModel.addColumn(dado.getNomeColuna().toUpperCase().concat(" (" + dado.getTipoDadoColuna().toLowerCase() + ")"), dado.getDados().toArray());
+                jtbResultadosModel.addColumn(dado.getNomeColuna().toUpperCase().concat(" (" + dado.getTipoDadoColuna().toLowerCase() + ")"));
+                tiposDeDados[cont] = dado.getTipoDadoColuna();
+                cont++;
+            }
+
+            for (int linha = 0; linha < qtdLinhas; linha++) {
+                for (int coluna = 0; coluna < qtdColunas; coluna++) {
+                    Object dado = dados.get(coluna).getDados().get(linha);
+                    linhaTabela[coluna] = (dado == null ? "null" : (tiposDeDados[coluna].contains("BLOB") ? "[ Blob ]" : dado.toString()));
+                }
+                jtbResultadosModel.addRow(linhaTabela);
             }
             view.rendimensionarTabela();
             view.exibirMensagen(Enumerated.TipoMsg.INFO, "Query ok, " + qtdLinhas + (qtdLinhas > 1 ? " linhas encontradas" : " linha encontrada"), false);
