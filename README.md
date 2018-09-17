@@ -7,14 +7,14 @@
       Ideal para ambientes onde é necessário executar consultas direto da maquina do cliente. 
     </p>
     <h2>Features</h2>
-    <li>
-      <ul>Mapeamento do banco de dados (Tabelas e colunas)</ul>
-      <ul>Histórico de querys com buscador</ul>
-      <ul>Exportação para Excel</ul>
-      <ul>Compatibilade com qualquer BD</ul>
-      <ul>Multiplas Abas</ul>
-      <ul>Leve</ul>
-    </li>
+    <ul>
+      <li>Mapeamento do banco de dados (Tabelas e colunas)</li>
+      <li>Histórico de querys com buscador</li>
+      <li>Exportação para Excel</li>
+      <li>Compatibilade com qualquer BD</li>
+      <li>Multiplas Abas</li>
+      <li>Leve</li>
+    </ul>
     <h2>Visão Geral</h2>
     <img src="https://github.com/IsraelGomes05/QueryEditor/blob/master/QueryEditor/imgs/tela-principal.PNG">
     <h2>Como Usar</h2>
