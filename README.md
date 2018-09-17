@@ -19,8 +19,8 @@
     <img src="https://github.com/IsraelGomes05/QueryEditor/blob/master/QueryEditor/imgs/tela-principal.PNG">
     <h2>Como Usar</h2>
    
-<h4>Crie uma Instância da Classe QueryTelaPrincipla Passando como paramentro O Frame que será associado, Se é modal ou não, conexão com BD, Local do arquivo com as querys (Histórico)<h4>
-  <code>QueryTelaPrincipal query = new QueryTelaPrincipal(this, true, ConnectionFactory.getConexao(), "C:/Users/Israel         Gomes/Documents/teste.txt");
+<h4>Crie uma Instância da Classe QueryTelaPrincipla Passando como paramentro O Frame que será associado, Se é modal ou não, conexão com BD, Local do arquivo com as querys (Histórico)</h4>
+  <code>QueryTelaPrincipal query = new QueryTelaPrincipal(this, true, ConnectionFactory.getConexao(), "C:/Users/Israel         Gomes/Documents/teste.txt");<br>
     query.setVisible(true);
  </code>
    </body>
