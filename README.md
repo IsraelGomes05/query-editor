@@ -18,9 +18,10 @@
     <h2>Visão Geral</h2>
     <img src="https://github.com/IsraelGomes05/QueryEditor/blob/master/QueryEditor/imgs/tela-principal.PNG">
     <h2>Como Usar</h2>
-   </body>
-</html>
-```java
+    ```java
 // Passando como paramentro O Frame que será associado, Se é modal ou não, conexão com BD, Local do arquivo com as querys (Histórico)
         QueryTelaPrincipal query = new QueryTelaPrincipal(this, true, ConnectionFactory.getConexao(), "C:/Users/Israel Gomes/Documents/teste.txt");   
 ```
+   </body>
+</html>
+
