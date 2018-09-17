@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -51,7 +52,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private SeletorQuerys seletorQuerys;
     private TabelaTreeModel treeModel;
     private ViewUtil viewUtil = new ViewUtil();
-
+    private HashMap<String, String> querys;
+    private java.awt.Frame parente;
+    
     /**
      * Cria e exibe a tela principal.
      *
@@ -65,6 +68,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         try {
+            this.parente = parent;
             conexaoBd = conexao;
             this.setTitle(parent.getTitle() + " SQL Editor");
             this.localQuerys = localQuerys;
@@ -73,8 +77,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jtbMensagens.setDefaultRenderer(Object.class, new RenderizadorTabela());
             jtbResultados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-            if ((this.localQuerys != null) && (!localQuerys.isEmpty())) {
-                HashMap<String, String> querys = controler.getQuerysMap();
+            if ((this.localQuerys != null) && (!this.localQuerys.isEmpty())) {
+                querys = controler.getQuerysMap();
                 this.seletorQuerys = new SeletorQuerys(parent, true, querys);
             }
             this.treeModel = new TabelaTreeModel(controler.getMapeamentoBd(conexaoBd), "BD");
@@ -98,6 +102,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         btnAdicionarTab = new javax.swing.JButton();
         btnExecutar = new javax.swing.JButton();
         btnHistorico = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
         jSplitPane2 = new javax.swing.JSplitPane();
         jpnQueryEditor = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -171,17 +176,32 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         });
 
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-salvar-36-amarelo.png"))); // NOI18N
+        btnSalvar.setToolTipText("Salvar");
+        btnSalvar.setBorderPainted(false);
+        btnSalvar.setContentAreaFilled(false);
+        btnSalvar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSalvar.setRolloverEnabled(true);
+        btnSalvar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-salvar-36.png"))); // NOI18N
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpnMenuLayout = new javax.swing.GroupLayout(jpnMenu);
         jpnMenu.setLayout(jpnMenuLayout);
         jpnMenuLayout.setHorizontalGroup(
             jpnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpnMenuLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnAdicionarTab, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAdicionarTab, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnHistorico, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpnMenuLayout.setVerticalGroup(
@@ -189,6 +209,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             .addComponent(btnAdicionarTab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnExecutar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnHistorico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSalvar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jSplitPane2.setDividerLocation(350);
@@ -393,13 +414,50 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     }//GEN-LAST:event_jmExportarParaExelActionPerformed
 
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
-        this.seletorQuerys.setVisible(true);
-        String querySelecionada = this.seletorQuerys.getQuerySelecionada();
-        if (!querySelecionada.isEmpty()) {
-            this.controler.carregarQuery(querySelecionada);
+        if (this.seletorQuerys != null) {
+            this.seletorQuerys.setVisible(true);
+            String querySelecionada = this.seletorQuerys.getQuerySelecionada();
+            if (!querySelecionada.isEmpty()) {
+                this.controler.carregarQuery(querySelecionada);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhum arquivo de querys encontrado. Verifique!");
         }
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        this.salvarQuery();
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    public void salvarQuery() {
+        if (this.getEditorSelecionado() == null) {
+            this.exibirMensagen(Enumerated.TipoMsg.ERRO, "Nenhum editor selecionado!", true);
+            return;
+        }
+        if ((this.localQuerys != null) && (!this.localQuerys.isEmpty())) {
+            
+            String tituloQuery = JOptionPane.showInputDialog(this, "Digite um título para esta Query");
+            
+            if (tituloQuery == null) {
+                JOptionPane.showMessageDialog(this, "Título inválido!");
+                return;
+            }
+            
+            for (String chave : querys.keySet()) {
+                if (chave.contains(tituloQuery.trim())) {
+                    JOptionPane.showMessageDialog(this, "Este título já está sendo usado, ou é inválido!");
+                    return;
+                }
+            }
+            
+            this.querys.put(tituloQuery, this.getEditorSelecionado().getText());
+            this.controler.atualizarArquivoQuerys(this.querys);
+            this.seletorQuerys.atualizarQuerys(querys);
+            this.seletorQuerys = new SeletorQuerys(this.parente, true, querys);
+        }
+    }
+    
+    
     public final void setIconesJtree() {
         JTreeRenderer renderer = new JTreeRenderer();
         renderer.setIcon(Tabela.class, viewUtil.getIcon("icons8-planilha-de-dados-16.png"));
@@ -472,6 +530,10 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
     public String getLocalQuerys() {
         return localQuerys;
+    }
+
+    public HashMap<String, String> getQuerys() {
+        return querys;
     }
 
     /**
@@ -569,6 +631,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private javax.swing.JButton btnAdicionarTab;
     private javax.swing.JButton btnExecutar;
     private javax.swing.JButton btnHistorico;
+    private javax.swing.JButton btnSalvar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

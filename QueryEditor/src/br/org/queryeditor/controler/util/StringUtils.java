@@ -20,25 +20,28 @@ import java.io.IOException;
 public class StringUtils {
 
     public static String lerArquivo(File arquivo) throws IOException {
-        String verificacao;
+        String linha;
         StringBuilder retorno = new StringBuilder();
         BufferedReader conteudo = new BufferedReader(new FileReader(arquivo));
         while (conteudo.ready()) {
-            verificacao = conteudo.readLine();
-            if (verificacao.contains("]")) {
-                retorno.append(verificacao.replace("]", "\r\n")).append("]");
+            linha = conteudo.readLine();
+            if (linha.contains("]")) {
+                retorno.append(linha.replace("]", "]\r\n"));
                 continue;
             }
-            retorno.append(verificacao).append("\r\n");
+            
+            if (linha.isEmpty()) {
+                continue;
+            }
+            retorno.append(linha).append("\r\n");
         }
         return retorno.toString();
     }
 
-    public static void escreverArquivo(String local, String nomeArquivo, String conteudo) throws FileNotFoundException, IOException {
+    public static void escreverArquivo(String local, String conteudo) throws FileNotFoundException, IOException {
         File file;
         FileWriter fWriter;
-        String diretorio = local + nomeArquivo;
-        file = new File(diretorio + ".txt");
+        file = new File(local);
 
         if (file.exists()) {
             fWriter = new FileWriter(file);

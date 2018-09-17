@@ -185,8 +185,13 @@ public class SeletorQuerys extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void preencherTabela(HashMap<String, String> querys) {
+        tabela.setNumRows(0);
         for (String value : querys.keySet()) {
             tabela.addRow(new Object[]{value});
         }
+    }
+    
+    public void atualizarQuerys(HashMap<String, String> querys){
+        this.querys = querys;
     }
 }

@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -137,7 +138,10 @@ public class PrincipalControler {
             for (String var : vetorQuerys) {
                 String[] query;
                 query = var.split("\\|");
-                querysMap.put(query[0].replace("[", ""), query[1]);
+                if (query.length < 2) {
+                    continue;
+                }
+                querysMap.put((query[0].replace("[", "").trim()).replace("\r\n", ""), query[1]);
             }
         } catch (IOException ex) {
             view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
@@ -165,5 +169,19 @@ public class PrincipalControler {
             view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
         }
         return tabelasBd;
+    }
+
+    public void atualizarArquivoQuerys(HashMap<String, String> querys) {
+        try {
+            String saida = "";
+            for (String titulo : querys.keySet()) {
+                String query = querys.get(titulo);
+                saida = saida.concat(String.format("[%s|%s] \r\n", titulo, query));
+            }
+            StringUtils.escreverArquivo(view.getLocalQuerys(), saida);
+            JOptionPane.showMessageDialog(view, "Arquivo Atualizado com sucesso");
+        } catch (IOException ex) {
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+        }
     }
 }
