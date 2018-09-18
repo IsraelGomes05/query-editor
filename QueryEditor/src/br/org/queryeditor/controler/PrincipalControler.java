@@ -4,6 +4,7 @@ import br.org.queryeditor.controler.util.Enumerated;
 import br.org.queryeditor.controler.util.Exportacao;
 import br.org.queryeditor.controler.util.StringUtils;
 import br.org.queryeditor.dao.DAO;
+import br.org.queryeditor.forms.Login;
 import br.org.queryeditor.forms.QueryTelaPrincipal;
 import br.org.queryeditor.model.Info;
 import br.org.queryeditor.model.Tabela;
@@ -55,6 +56,14 @@ public class PrincipalControler {
             RSyntaxTextArea editor = view.getEditorSelecionado();
             if (editor != null) {
                 String query = editor.getText().trim();
+                
+                
+                if (!view.isPermitirAlteracoes()) {
+                    if (!this.verificarOperacao(query)) {
+                        return;
+                    }
+                }
+                
                 ArrayList<Info> dados;
                 if (query.isEmpty()) {
                     view.exibirMensagen(Enumerated.TipoMsg.ERRO, "A Query não pode estar vazia", true);
@@ -158,7 +167,6 @@ public class PrincipalControler {
             return;
         }
         view.exibirMensagen(Enumerated.TipoMsg.ERRO, "Nenhum editor selecionado!", true);
-
     }
 
     public List<Tabela> getMapeamentoBd(Connection con) {
@@ -183,5 +191,15 @@ public class PrincipalControler {
         } catch (IOException ex) {
             view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
         }
+    }
+    
+    public boolean verificarOperacao(String query) {
+        String queryVerificacao = query.toUpperCase();
+        if (queryVerificacao.contains("UPDATE") || queryVerificacao.contains("DELETE") || queryVerificacao.contains("CREATE") || queryVerificacao.contains("ALTER") || queryVerificacao.contains("DROP")) {
+            Login login = new Login(null, true, view.getSenhaParaAteracoes());
+            login.setVisible(true);
+            return login.isDadosCorretos();
+        }
+        return true;
     }
 }

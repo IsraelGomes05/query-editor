@@ -54,6 +54,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private ViewUtil viewUtil = new ViewUtil();
     private HashMap<String, String> querys;
     private java.awt.Frame parente;
+    private boolean permitirAlteracoes;
+    private String senhaParaAteracoes;
     
     /**
      * Cria e exibe a tela principal.
@@ -63,8 +65,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
      * esta em execução.
      * @param conexao Conexão com o banco de dados.
      * @param localQuerys Local onde está o arquivo de texto com as querys
+     * @param permitirAlteracoes
      */
-    public QueryTelaPrincipal(java.awt.Frame parent, boolean modal, Connection conexao, String localQuerys) {
+    public QueryTelaPrincipal(java.awt.Frame parent, boolean modal, Connection conexao, String localQuerys, boolean permitirAlteracoes, String senhaParaAteracoes) {
         super(parent, modal);
         initComponents();
         try {
@@ -84,6 +87,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.treeModel = new TabelaTreeModel(controler.getMapeamentoBd(conexaoBd), "BD");
             this.jTreeBancoDeDados.setModel(treeModel);
             this.setIconesJtree();
+            this.permitirAlteracoes = permitirAlteracoes;
+            this.senhaParaAteracoes = senhaParaAteracoes;
         } catch (Exception e) {
             this.exibirMensagen(Enumerated.TipoMsg.ERRO, e.getMessage(), true);
         }
@@ -536,6 +541,16 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         return querys;
     }
 
+    public boolean isPermitirAlteracoes() {
+        return permitirAlteracoes;
+    }
+
+    public String getSenhaParaAteracoes() {
+        return senhaParaAteracoes;
+    }
+
+    
+    
     /**
      * Exibe uma mensagem na tabela de saídas.
      *
