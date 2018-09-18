@@ -217,7 +217,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             .addComponent(btnSalvar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jSplitPane2.setDividerLocation(350);
+        jSplitPane2.setDividerLocation(400);
         jSplitPane2.setDividerSize(4);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -230,13 +230,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane6)
         );
 
         jScrollPane5.setViewportView(jPanel2);
@@ -245,7 +243,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jpnNavegacao.setLayout(jpnNavegacaoLayout);
         jpnNavegacaoLayout.setHorizontalGroup(
             jpnNavegacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5)
+            .addGroup(jpnNavegacaoLayout.createSequentialGroup()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jpnNavegacaoLayout.setVerticalGroup(
             jpnNavegacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,17 +258,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpnSuperiorLayout.createSequentialGroup()
                 .addComponent(jpnNavegacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.DEFAULT_SIZE, 1074, Short.MAX_VALUE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.PREFERRED_SIZE, 1052, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jpnSuperiorLayout.setVerticalGroup(
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpnNavegacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jpnSuperiorLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jtbpQueryEditors)
-                .addContainerGap())
+            .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         jScrollPane1.setViewportView(jpnSuperior);
@@ -281,7 +277,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         );
         jpnQueryEditorLayout.setVerticalGroup(
             jpnQueryEditorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
         );
 
         jSplitPane2.setTopComponent(jpnQueryEditor);
@@ -348,7 +344,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
+            .addComponent(jtbpResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 1245, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,7 +361,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         );
         jpnResultLayout.setVerticalGroup(
             jpnResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
         );
 
         jSplitPane2.setRightComponent(jpnResult);
@@ -459,6 +455,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.controler.atualizarArquivoQuerys(this.querys);
             this.seletorQuerys.atualizarQuerys(querys);
             this.seletorQuerys = new SeletorQuerys(this.parente, true, querys);
+        } else {
+            JOptionPane.showMessageDialog(this, "Não é possível salvar esta query, pois não há um arquivo como destino!", "Falha", JOptionPane.WARNING_MESSAGE);
         }
     }
     

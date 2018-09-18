@@ -195,7 +195,7 @@ public class PrincipalControler {
     
     public boolean verificarOperacao(String query) {
         String queryVerificacao = query.toUpperCase();
-        if (queryVerificacao.contains("UPDATE") || queryVerificacao.contains("DELETE") || queryVerificacao.contains("CREATE") || queryVerificacao.contains("ALTER") || queryVerificacao.contains("DROP")) {
+        if (queryVerificacao.contains("UPDATE") || queryVerificacao.contains("DELETE") || queryVerificacao.contains("ALTER") || queryVerificacao.contains("DROP")) {
             Login login = new Login(null, true, view.getSenhaParaAteracoes());
             login.setVisible(true);
             return login.isDadosCorretos();
