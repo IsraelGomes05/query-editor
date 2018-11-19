@@ -58,12 +58,6 @@ public class DAO {
         return dados;
     }
 
-    public void executeUpdate(String sql, Connection con) throws SQLException {
-        PreparedStatement stm = con.prepareStatement(sql);
-
-        int rs = stm.executeUpdate();
-    }
-
     /**
      * Preenche uma lista com o ResultSet.
      *
@@ -80,7 +74,7 @@ public class DAO {
             Info data = new Info();
             data.setIndex(cont);
             data.setSelect(true);
-            data.setNomeColuna(metaData.getColumnName(cont));
+            data.setNomeColuna(metaData.getColumnLabel(cont));
             data.setTipoDadoColuna(metaData.getColumnTypeName(cont));
             colecao.add(data);
         }
