@@ -1,5 +1,6 @@
 <html>
   <body>
+    <a class="badge-align" href="https://www.codacy.com/app/IsraelGomes05/QueryEditor?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IsraelGomes05/QueryEditor&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/95f3f209a11c441d8d33849caadb88a2"/></a>
     <h2>QueryEditor</h2>
     <h4>Editor de querys para aplicações java Desktop</h4>
     <p>
