@@ -40,9 +40,9 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * created 05/08/2018<br>
  * lastModified 08/08/2018
  *
- * @author  Israel Gomes
+ * @author Israel Gomes
  * @version 1.0
- * @since   1.0
+ * @since 1.0
  */
 public class QueryTelaPrincipal extends javax.swing.JDialog {
 
@@ -91,8 +91,6 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 if (this.localQuerys.contains("dontpad")) {
                     btnSalvar.setVisible(false);
                 }
-                querys = controler.getQuerysMap();
-                this.seletorQuerys = new SeletorQuerys(parent, true, querys);
             }
             this.treeModel = new TabelaTreeModel(controler.getMapeamentoBd(conexaoBd), "BD");
             this.jTreeBancoDeDados.setModel(treeModel);
@@ -428,14 +426,21 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     }//GEN-LAST:event_jmExportarParaExelActionPerformed
 
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
-        if (this.seletorQuerys != null) {
-            this.seletorQuerys.setVisible(true);
-            String querySelecionada = this.seletorQuerys.getQuerySelecionada();
-            if (!querySelecionada.isEmpty()) {
-                this.controler.carregarQuery(querySelecionada);
-            }
-        } else {
+
+        if ((this.localQuerys == null) || (this.localQuerys.isEmpty())) {
             JOptionPane.showMessageDialog(this, "Nenhum arquivo de querys encontrado. Verifique!");
+            return;
+        }
+
+        if (seletorQuerys == null) {
+            querys = controler.getQuerysMap();
+            this.seletorQuerys = new SeletorQuerys(null, true, querys);
+        }
+        
+        this.seletorQuerys.setVisible(true);
+        String querySelecionada = this.seletorQuerys.getQuerySelecionada();
+        if (!querySelecionada.isEmpty()) {
+            this.controler.carregarQuery(querySelecionada);
         }
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
@@ -574,7 +579,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.jtbpResultados.setSelectedIndex(0);
         }
 
-        this.msgTabelaModel.addRow(new Object[]{ tipoMsg.getDescricao(), this.formatoData.format(new Date()), msg});
+        this.msgTabelaModel.addRow(new Object[]{tipoMsg.getDescricao(), this.formatoData.format(new Date()), msg});
         if (msgTabelaModel.getRowCount() > 10) {
             msgTabelaModel.removeRow(0);
         }
