@@ -43,9 +43,8 @@ public class DAO {
         PreparedStatement stm = con.prepareStatement(sql);
         boolean isSelect = stm.execute();
         numLinhasAfetadas = stm.getUpdateCount();
-
         stm.getUpdateCount();
-
+        
         if (isSelect) {
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {

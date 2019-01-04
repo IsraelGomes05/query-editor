@@ -40,9 +40,9 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * created 05/08/2018<br>
  * lastModified 08/08/2018
  *
- * @author Israel Gomes
+ * @author  Israel Gomes
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 public class QueryTelaPrincipal extends javax.swing.JDialog {
 

@@ -8,9 +8,9 @@ import java.util.Objects;
  * created 00/00/2018<br>
  * lastModified 00/00/2018
  *
- * @author Israel Gomes
+ * @author  Israel Gomes
  * @version 1.0
- * @since 1.0
+ * @since   1.0
  */
 public class LinhaTabela {
 
