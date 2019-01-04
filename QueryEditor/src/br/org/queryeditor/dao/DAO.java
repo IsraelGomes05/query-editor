@@ -1,5 +1,6 @@
 package br.org.queryeditor.dao;
 
+import br.org.queryeditor.forms.QueryTelaPrincipal;
 import br.org.queryeditor.model.Info;
 import br.org.queryeditor.model.LinhaTabela;
 import br.org.queryeditor.model.Tabela;
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  * Classe responsável pela execução de ações no banco de dados.<br>
@@ -33,6 +35,8 @@ public class DAO {
      * @throws SQLException
      */
     public ArrayList<Info> executeQuery(String sql, Connection con) throws SQLException {
+        QueryTelaPrincipal.logger.log(Level.INFO, "\n <<< Query Executada pelo editor de Query >>>  \n {0}", sql);
+
         int numLinhasAfetadas;
         this.mapearBancoDeDados(con);
         ArrayList<Info> dados = new ArrayList();

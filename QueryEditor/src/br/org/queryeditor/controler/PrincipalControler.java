@@ -3,6 +3,7 @@ package br.org.queryeditor.controler;
 import br.org.queryeditor.controler.util.Enumerated;
 import br.org.queryeditor.controler.util.Exportacao;
 import br.org.queryeditor.controler.util.StringUtils;
+import br.org.queryeditor.controler.util.WebUtil;
 import br.org.queryeditor.dao.DAO;
 import br.org.queryeditor.forms.Login;
 import br.org.queryeditor.forms.QueryTelaPrincipal;
@@ -55,25 +56,32 @@ public class PrincipalControler {
         try {
             RSyntaxTextArea editor = view.getEditorSelecionado();
             if (editor != null) {
+                String querySelecionada = editor.getSelectedText();
                 String query = editor.getText().trim();
-                
+                if (querySelecionada != null) {
+                    query = querySelecionada;
+                }
                 
                 if (!view.isPermitirAlteracoes()) {
                     if (!this.verificarOperacao(query)) {
                         return;
                     }
                 }
-                
+
                 ArrayList<Info> dados;
                 if (query.isEmpty()) {
                     view.exibirMensagen(Enumerated.TipoMsg.ERRO, "A Query não pode estar vazia", true);
                     return;
                 }
-                dados = this.dao.executeQuery(query, con);
-                if (!dados.isEmpty()) {
-                    this.preencherTabela(dados);
-                } else {
-                    view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
+                
+                 for (String sql : query.split(";")) {
+                    dados = this.dao.executeQuery(sql, con);
+                    if (!dados.isEmpty()) {
+                        this.preencherTabela(dados);
+                    } else {
+                        view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
+                        this.limparTabela();
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -140,22 +148,35 @@ public class PrincipalControler {
     public HashMap<String, String> getQuerysMap() {
         String[] vetorQuerys;
         HashMap<String, String> querysMap = new HashMap();
-        File file = new File(this.localArquivo);
-        try {
-            String arquivo = StringUtils.lerArquivo(file);
-            vetorQuerys = arquivo.split("]");
+            String arquivoQuerys = this.getTextoHistoricoQuerys();
+            vetorQuerys = arquivoQuerys.split("]");
             for (String var : vetorQuerys) {
                 String[] query;
                 query = var.split("\\|");
                 if (query.length < 2) {
                     continue;
                 }
-                querysMap.put((query[0].replace("[", "").trim()).replace("\r\n", ""), query[1]);
+                querysMap.put((query[0].replace("[", "").trim()).replace("\r\n", ""), query[1].trim());
             }
-        } catch (IOException ex) {
-            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
-        }
         return querysMap;
+    }
+
+    public String getTextoHistoricoQuerys() {
+        String arquivoQuerys = "";
+        try {
+            if ((this.localArquivo != null) && !this.localArquivo.isEmpty()) {
+                if (localArquivo.contains("dontpad")) {
+                    arquivoQuerys = WebUtil.get(this.localArquivo);
+                    arquivoQuerys = this.getApenasConteudoDontPad(arquivoQuerys);
+                } else {
+                    File file = new File(this.localArquivo);
+                    arquivoQuerys = StringUtils.lerArquivo(file);
+                }
+            }
+        } catch (Exception ex) {
+            view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
+        } 
+        return arquivoQuerys;
     }
 
     public void carregarQuery(String query) {
@@ -192,7 +213,7 @@ public class PrincipalControler {
             view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
         }
     }
-    
+
     public boolean verificarOperacao(String query) {
         String queryVerificacao = query.toUpperCase();
         if (queryVerificacao.contains("UPDATE") || queryVerificacao.contains("DELETE") || queryVerificacao.contains("ALTER") || queryVerificacao.contains("DROP")) {
@@ -201,5 +222,15 @@ public class PrincipalControler {
             return login.isDadosCorretos();
         }
         return true;
+    }
+
+    private String getApenasConteudoDontPad(String arquivoQuerys) {
+        if (arquivoQuerys != null && !arquivoQuerys.isEmpty()) {
+            String substring = arquivoQuerys.substring(arquivoQuerys.indexOf("textarea"), arquivoQuerys.indexOf("</textarea>"));
+             
+            return substring.substring(substring.indexOf("["), substring.length());
+        } else {
+            return "";
+        }
     }
 }

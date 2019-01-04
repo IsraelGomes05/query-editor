@@ -18,7 +18,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -56,7 +59,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private java.awt.Frame parente;
     private boolean permitirAlteracoes;
     private String senhaParaAteracoes;
-    
+    public static Logger logger;
+    private SimpleDateFormat formatoData = new SimpleDateFormat("HH:mm:ss");
+
     /**
      * Cria e exibe a tela principal.
      *
@@ -66,8 +71,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
      * @param conexao Conexão com o banco de dados.
      * @param localQuerys Local onde está o arquivo de texto com as querys
      * @param permitirAlteracoes
+     * @param senhaParaAteracoes
      */
-    public QueryTelaPrincipal(java.awt.Frame parent, boolean modal, Connection conexao, String localQuerys, boolean permitirAlteracoes, String senhaParaAteracoes) {
+    public QueryTelaPrincipal(java.awt.Frame parent, boolean modal, Connection conexao, String localQuerys, boolean permitirAlteracoes, String senhaParaAteracoes, Logger logger) {
         super(parent, modal);
         initComponents();
         try {
@@ -77,10 +83,14 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.localQuerys = localQuerys;
             this.controler = new PrincipalControler(this);
             this.msgTabelaModel = (DefaultTableModel) this.jtbMensagens.getModel();
+            QueryTelaPrincipal.logger = logger;
             jtbMensagens.setDefaultRenderer(Object.class, new RenderizadorTabela());
             jtbResultados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
             if ((this.localQuerys != null) && (!this.localQuerys.isEmpty())) {
+                if (this.localQuerys.contains("dontpad")) {
+                    btnSalvar.setVisible(false);
+                }
                 querys = controler.getQuerysMap();
                 this.seletorQuerys = new SeletorQuerys(parent, true, querys);
             }
@@ -315,11 +325,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
             },
             new String [] {
-                "", ""
+                "", "", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -336,6 +346,9 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jtbMensagens.getColumnModel().getColumn(0).setMinWidth(100);
             jtbMensagens.getColumnModel().getColumn(0).setPreferredWidth(50);
             jtbMensagens.getColumnModel().getColumn(0).setMaxWidth(400);
+            jtbMensagens.getColumnModel().getColumn(1).setMinWidth(100);
+            jtbMensagens.getColumnModel().getColumn(1).setPreferredWidth(50);
+            jtbMensagens.getColumnModel().getColumn(1).setMaxWidth(400);
         }
 
         jtbpResultados.addTab("Mensagens", jScrollPane4);
@@ -436,21 +449,21 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             return;
         }
         if ((this.localQuerys != null) && (!this.localQuerys.isEmpty())) {
-            
+
             String tituloQuery = JOptionPane.showInputDialog(this, "Digite um título para esta Query");
-            
+
             if (tituloQuery == null) {
                 JOptionPane.showMessageDialog(this, "Título inválido!");
                 return;
             }
-            
+
             for (String chave : querys.keySet()) {
                 if (chave.contains(tituloQuery.trim())) {
                     JOptionPane.showMessageDialog(this, "Este título já está sendo usado, ou é inválido!");
                     return;
                 }
             }
-            
+
             this.querys.put(tituloQuery, this.getEditorSelecionado().getText());
             this.controler.atualizarArquivoQuerys(this.querys);
             this.seletorQuerys.atualizarQuerys(querys);
@@ -459,8 +472,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Não é possível salvar esta query, pois não há um arquivo como destino!", "Falha", JOptionPane.WARNING_MESSAGE);
         }
     }
-    
-    
+
     public final void setIconesJtree() {
         JTreeRenderer renderer = new JTreeRenderer();
         renderer.setIcon(Tabela.class, viewUtil.getIcon("icons8-planilha-de-dados-16.png"));
@@ -547,8 +559,6 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         return senhaParaAteracoes;
     }
 
-    
-    
     /**
      * Exibe uma mensagem na tabela de saídas.
      *
@@ -564,7 +574,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.jtbpResultados.setSelectedIndex(0);
         }
 
-        this.msgTabelaModel.addRow(new Object[]{tipoMsg.getDescricao(), msg});
+        this.msgTabelaModel.addRow(new Object[]{ tipoMsg.getDescricao(), this.formatoData.format(new Date()), msg});
         if (msgTabelaModel.getRowCount() > 10) {
             msgTabelaModel.removeRow(0);
         }
