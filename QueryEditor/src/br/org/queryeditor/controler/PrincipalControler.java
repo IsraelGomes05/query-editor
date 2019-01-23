@@ -168,6 +168,10 @@ public class PrincipalControler {
                 if (localArquivo.contains("dontpad")) {
                     arquivoQuerys = WebUtil.get(this.localArquivo);
                     arquivoQuerys = this.getApenasConteudoDontPad(arquivoQuerys);
+                    if (arquivoQuerys != null) {
+                        arquivoQuerys = arquivoQuerys.replace("&lt;", "<");
+                        arquivoQuerys = arquivoQuerys.replace("&gt;", ">");
+                    }
                 } else {
                     File file = new File(this.localArquivo);
                     arquivoQuerys = StringUtils.lerArquivo(file);
