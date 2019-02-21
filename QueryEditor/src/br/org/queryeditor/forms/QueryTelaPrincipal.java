@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -44,7 +45,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @version 1.0
  * @since 1.0
  */
-public class QueryTelaPrincipal extends javax.swing.JDialog {
+public class QueryTelaPrincipal extends javax.swing.JFrame {
 
     private int tab = 0;
     private static Connection conexaoBd;
@@ -60,7 +61,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private boolean permitirAlteracoes;
     private String senhaParaAteracoes;
     public static Logger logger;
-    private SimpleDateFormat formatoData = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat formatoData = new SimpleDateFormat("HH:mm:ss SSSS");
 
     /**
      * Cria e exibe a tela principal.
@@ -74,11 +75,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
      * @param senhaParaAteracoes
      */
     public QueryTelaPrincipal(java.awt.Frame parent, boolean modal, Connection conexao, String localQuerys, boolean permitirAlteracoes, String senhaParaAteracoes, Logger logger) {
-        super(parent, modal);
         initComponents();
         try {
             this.parente = parent;
             conexaoBd = conexao;
+            this.setIconImage(this.viewUtil.getImageIcon("icons8-mysql-36.png").getImage());
             this.setTitle(parent.getTitle() + " SQL Editor");
             this.localQuerys = localQuerys;
             this.controler = new PrincipalControler(this);
@@ -97,6 +98,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             this.setIconesJtree();
             this.permitirAlteracoes = permitirAlteracoes;
             this.senhaParaAteracoes = senhaParaAteracoes;
+            this.inicializarCronometro();
         } catch (Exception e) {
             this.exibirMensagen(Enumerated.TipoMsg.ERRO, e.getMessage(), true);
         }
@@ -116,6 +118,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
         btnExecutar = new javax.swing.JButton();
         btnHistorico = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
+        lblTempo = new javax.swing.JLabel();
+        lblCronometro = new javax.swing.JLabel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jpnQueryEditor = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -202,6 +206,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             }
         });
 
+        lblTempo.setFont(new java.awt.Font("Lucida Sans Unicode", 1, 13)); // NOI18N
+        lblTempo.setForeground(new java.awt.Color(153, 153, 0));
+        lblTempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblTempo.setText("0");
+
+        lblCronometro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/org/queryeditor/imagens/icons8-cronometro-26-red.png"))); // NOI18N
+
         javax.swing.GroupLayout jpnMenuLayout = new javax.swing.GroupLayout(jpnMenu);
         jpnMenu.setLayout(jpnMenuLayout);
         jpnMenuLayout.setHorizontalGroup(
@@ -215,7 +226,11 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
                 .addComponent(btnHistorico, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblCronometro)
+                .addGap(0, 0, 0))
         );
         jpnMenuLayout.setVerticalGroup(
             jpnMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,6 +238,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             .addComponent(btnExecutar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnHistorico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnSalvar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblCronometro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblTempo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jSplitPane2.setDividerLocation(400);
@@ -266,8 +283,8 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpnSuperiorLayout.createSequentialGroup()
                 .addComponent(jpnNavegacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.PREFERRED_SIZE, 1052, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jtbpQueryEditors, javax.swing.GroupLayout.DEFAULT_SIZE, 1052, Short.MAX_VALUE))
         );
         jpnSuperiorLayout.setVerticalGroup(
             jpnSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -412,7 +429,7 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAdicionarTabActionPerformed
 
     private void btnExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarActionPerformed
-        this.controler.executarQuery(QueryTelaPrincipal.conexaoBd);
+        this.executarQuery();
     }//GEN-LAST:event_btnExecutarActionPerformed
 
     private void jtbResultadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtbResultadosMouseClicked
@@ -427,21 +444,26 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
 
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
 
-        if ((this.localQuerys == null) || (this.localQuerys.isEmpty())) {
-            JOptionPane.showMessageDialog(this, "Nenhum arquivo de querys encontrado. Verifique!");
-            return;
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if ((localQuerys == null) || (localQuerys.isEmpty())) {
+                    JOptionPane.showMessageDialog(null, "Nenhum arquivo de querys encontrado. Verifique!");
+                    return;
+                }
 
-        if (seletorQuerys == null) {
-            querys = controler.getQuerysMap();
-            this.seletorQuerys = new SeletorQuerys(null, true, querys);
-        }
-        
-        this.seletorQuerys.setVisible(true);
-        String querySelecionada = this.seletorQuerys.getQuerySelecionada();
-        if (!querySelecionada.isEmpty()) {
-            this.controler.carregarQuery(querySelecionada);
-        }
+                if (seletorQuerys == null) {
+                    querys = controler.getQuerysMap();
+                    seletorQuerys = new SeletorQuerys(null, true, querys);
+                }
+
+                seletorQuerys.setVisible(true);
+                String querySelecionada = seletorQuerys.getQuerySelecionada();
+                if (!querySelecionada.isEmpty()) {
+                    controler.carregarQuery(querySelecionada);
+                }
+            }
+        });
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -604,9 +626,13 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     AbstractAction executarQuery = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            controler.executarQuery(conexaoBd);
+            executarQuery();
         }
     };
+
+    public void executarQuery() {
+        controler.preparaQuery(QueryTelaPrincipal.conexaoBd);
+    }
 
     public void rendimensionarTabela() {
         for (int i = 0; i < jtbResultados.getColumnCount(); i++) {
@@ -682,6 +708,41 @@ public class QueryTelaPrincipal extends javax.swing.JDialog {
     private javax.swing.JTable jtbResultados;
     private javax.swing.JTabbedPane jtbpQueryEditors;
     private javax.swing.JTabbedPane jtbpResultados;
+    private javax.swing.JLabel lblCronometro;
+    private javax.swing.JLabel lblTempo;
     // End of variables declaration//GEN-END:variables
 
+    private boolean pararCronometro = true;
+    
+
+    public void inicializarCronometro() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                double count = 0;
+                while (true) {
+                    try {
+                        Thread.currentThread().sleep(1);
+                    } catch (InterruptedException e) {
+                    }
+                    if (!pararCronometro) {
+                        count++;
+                        lblTempo.setText(String.format("%s", count / 1000));
+                    } else {
+                        count = 0;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void iniciarCronometro() {
+        pararCronometro = false;
+        this.viewUtil.alterarIcone(lblCronometro, "icons8-cronometro-16.png");
+    }
+
+    public void pararCronometro() {
+        pararCronometro = true;
+        this.viewUtil.alterarIcone(lblCronometro, "icons8-cronometro-26-red.png");
+    }
 }
