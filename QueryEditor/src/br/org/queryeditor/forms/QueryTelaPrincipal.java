@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -99,6 +98,7 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
             this.permitirAlteracoes = permitirAlteracoes;
             this.senhaParaAteracoes = senhaParaAteracoes;
             this.inicializarCronometro();
+            this.carregarQuerys();
         } catch (Exception e) {
             this.exibirMensagen(Enumerated.TipoMsg.ERRO, e.getMessage(), true);
         }
@@ -444,26 +444,25 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
 
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if ((localQuerys == null) || (localQuerys.isEmpty())) {
-                    JOptionPane.showMessageDialog(null, "Nenhum arquivo de querys encontrado. Verifique!");
-                    return;
-                }
+        if ((localQuerys == null) || (localQuerys.isEmpty())) {
+            JOptionPane.showMessageDialog(null, "Nenhum arquivo de querys encontrado. Verifique!");
+            return;
+        }
 
-                if (seletorQuerys == null) {
-                    querys = controler.getQuerysMap();
-                    seletorQuerys = new SeletorQuerys(null, true, querys);
-                }
+        if (querys == null) {
+            JOptionPane.showMessageDialog(null, "Arquivo De querys ainda não carregado...");
+            return;
+        }
+        
+        if (seletorQuerys == null) {
+            seletorQuerys = new SeletorQuerys(null, true, querys);
+        }
 
-                seletorQuerys.setVisible(true);
-                String querySelecionada = seletorQuerys.getQuerySelecionada();
-                if (!querySelecionada.isEmpty()) {
-                    controler.carregarQuery(querySelecionada);
-                }
-            }
-        });
+        seletorQuerys.setVisible(true);
+        String querySelecionada = seletorQuerys.getQuerySelecionada();
+        if (!querySelecionada.isEmpty()) {
+            controler.carregarQuery(querySelecionada);
+        }
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -616,6 +615,9 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
         component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), "executarQuery");
         component.getActionMap().put("executarQuery", executarQuery);
 
+        component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK), "addTab");
+        component.getActionMap().put("addTab", addTab);
+
         component.getInputMap().put(KeyStroke.getKeyStroke("F9"), "executarQuery");
         component.getActionMap().put("executarQuery", executarQuery);
     }
@@ -627,6 +629,13 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             executarQuery();
+        }
+    };
+
+    AbstractAction addTab = new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            adicionarTab();
         }
     };
 
@@ -713,7 +722,6 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private boolean pararCronometro = true;
-    
 
     public void inicializarCronometro() {
         new Thread(new Runnable() {
@@ -744,5 +752,14 @@ public class QueryTelaPrincipal extends javax.swing.JFrame {
     public void pararCronometro() {
         pararCronometro = true;
         this.viewUtil.alterarIcone(lblCronometro, "icons8-cronometro-26-red.png");
+    }
+
+    private void carregarQuerys() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                querys = controler.getQuerysMap();
+            }
+        }).start();
     }
 }

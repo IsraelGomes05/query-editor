@@ -59,17 +59,20 @@ public class PrincipalControler {
             @Override
             public void run() {
                 try {
-                    ArrayList<Info> dados;
-                    for (String sql : query.split(";")) {
-                        dados = dao.executeQuery(sql, con);
-                        if (!dados.isEmpty()) {
-                            preencherTabela(dados);
-                        } else {
-                            view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
-                            limparTabela();
-                        }
+                    ArrayList<Info> dados = new ArrayList<>();
+                    String[] querys = query.split(";");
+
+                    for (String sql : querys) {
+                       dados = dao.executeQuery(sql, con);
                     }
+
                     view.pararCronometro();
+                    if (!dados.isEmpty()) {
+                        preencherTabela(dados);
+                    } else {
+                        view.exibirMensagen(Enumerated.TipoMsg.AVISO, "Query ok, nenhum registro encontrado", true);
+                        limparTabela();
+                    }
 
                 } catch (SQLException ex) {
                     view.exibirMensagen(Enumerated.TipoMsg.ERRO, ex.getMessage(), true);
